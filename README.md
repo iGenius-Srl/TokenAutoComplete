@@ -1,51 +1,18 @@
-### Planning note
-
-If you're already using the library, I'm looking at redesigning some of the core components to make this library more reliable and deal with some lingering bugs. Please give me feedback on how you're using it [here](https://github.com/splitwise/TokenAutoComplete/issues/272)
-
-### Upgrading from 1.* to 2.0
-
-There is one breaking change from 1.* to 2.0. You need to extend ```TokenCompleteTextView<Object>``` instead of ```TokenCompleteTextView```.
-
-TokenAutoComplete
-=================
-
+# TokenAutoComplete
 TokenAutoComplete is an Android Gmail style token  auto-complete text field and filter. It's designed to have an extremely simple API to make it easy for anyone to implement this functionality while still exposing enough customization to let you make it awesome.
 
-Support for Android 4.0.3 (API 15) and up. If you need support for earlier versions of Android, [version 1.2.1](https://github.com/splitwise/TokenAutoComplete/releases/tag/v1.2.1) is the most recent version that supports Android 2.2 (API 8) and up.
+Support for Android 4.0.3 (API 16) and up.
 
-![Focused TokenAutoCompleteTextView example](https://raw.github.com/splitwise/TokenAutoComplete/gh-pages/images/focused.png)
+![Focused TokenAutoCompleteTextView example](https://raw.github.com/iGenius-Srl/TokenAutoComplete/gh-pages/images/focused.png)
 
-![Unfocused TokenAutoCompleteTextView example](https://raw.github.com/splitwise/TokenAutoComplete/gh-pages/images/not_focused.png)
+![Unfocused TokenAutoCompleteTextView example](https://raw.github.com/iGenius-Srl/TokenAutoComplete/gh-pages/images/not_focused.png)
 
-Setup
-=====
-
-### Gradle
+## Setup
+```groovy
+compile "net.igenius:tokenautocomplete:1.0"
 ```
-dependencies {
-    compile "com.splitwise:tokenautocomplete:2.0.8@aar"
-}
-```
-### Maven
-```
-<dependency>
-  <groupId>com.splitwise</groupId>
-  <artifactId>tokenautocomplete</artifactId>
-  <version>2.0.8</version>
-  <type>aar</type>
-</dependency>
-```
-### No build tools
 
-[Download the jar file](https://github.com/splitwise/TokenAutoComplete/releases) and add it to your project
-
-If you would like to get the most recent code in a jar, clone the project and run ```./gradlew jar``` from the root folder. This will build a tokenautocomplete.jar in ```library/build/libs/```.
-
-You may also add the library as an Android Library to your project. All the library files live in ```library```.
-
-Creating your auto complete view
---------------------------------
-
+### Creating your auto complete view
 If you'd rather just start with a working example, clone the project and take a look.
 
 For a basic token auto complete view, you'll need to
@@ -168,7 +135,7 @@ Layout code
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.tokenautocomplete.ContactsCompletionView
+    <net.igenius.tokenautocompletedemo.ContactsCompletionView
         android:id="@+id/searchView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -179,9 +146,7 @@ Layout code
 That's it! You can grab the objects the user tokenized with getObjects() on the TokenCompleteTextView when you need to get the data out.
 
 
-Setting a prefix prompt
-=======================
-
+###Setting a prefix prompt
 If you have a short prompt like "To: ", you can probably get away with setting a drawable on the left side of the ```TokenCompleteTextView```. If you have something longer, you will probably not want your prefix to take up the whole height of the view. If you would like to have a prefix that only indents the first line, you should use ```setPrefix```. This code is a little quirky when restoring the activity, so you want to make sure it only gets called on a fresh start in ```onCreate```:
 
 ```java
@@ -190,9 +155,7 @@ if (savedInstanceState == null) {
 }
 ```
 
-Custom filtering
-================
-
+### Custom filtering
 If you've used the gmail auto complete, you know that it doesn't use the default "toString" filtering you get with an ArrayAdapter. If you've dug in to the ArrayAdapter, you find an unfortunate mess with no good place for you to add your own custom filter code without re-writing the whole class. If you need to support older versions of Android, this quickly becomes difficult as you'll need to carefully handle API differences for each version.
 
 (NOTE: ArrayAdapter is actually well written, it just doesn't allow for easy custom filters)
@@ -215,14 +178,10 @@ adapter = new FilteredArrayAdapter<Person>(this, android.R.layout.simple_list_it
 };
 ```
 
-Duplicate objects
-=================
-
+### Duplicate objects
 In addition to custom filtering, you may want to make sure you don't accidentally miss something and get duplicate tokens. ```allowDuplicates(false)``` on the ```TokenCompleteTextView``` will prevent any tokens currently in the view from being added a second time. Token objects must implement ```equals``` correctly. Any text the user entered for the duplicate token will be cleared.
 
-Responding to user selections
-=============================
-
+### Responding to user selections
 If you're solving a similar problem to Splitwise, you need to handle users adding and removing tokens. I've provided a simple interface to get these events and allow you to respond to them in the TokenCompleteTextView:
 
 ```java
@@ -240,7 +199,6 @@ public class TokenActivity extends Activity implements TokenCompleteTextView.Tok
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         /* code from the initial example */
-
         completionView.setTokenListener(this);
     }
 
@@ -258,15 +216,11 @@ public class TokenActivity extends Activity implements TokenCompleteTextView.Tok
 
 In Splitwise we use these callbacks to handle users selecting a group when adding an expense. When a user adds a group to an expense, we remove all the users in the group and the other groups from the array adapter. A user should only be able to select one group and it would be redundant to add users in the group to the expense again.
 
-Programatically add and remove objects
-======================================
-
+### Programatically add and remove objects
 You may want to prefill the list with objects. For example when replying to an email, you would want the To: and CC: fields to have the correct emails in them. You can use ```addObject``` to put these tokens in. If you are using ```TokenDeleteStyle.PartialCompletion``` , you will want to call ```addObject(obj, "completion text")``` to get appropriate replacement text, otherwise just call ```addObject(obj)```. You can also remove objects programatically with ```removeObject``` though this will remove all objects that return true when calling ```equals``` on them. If you have copies in the array, you may need to take special care with this.
 Finally there is a ```clear``` function to empty the EditText and remove all the objects.
 
-Letting users click to select and delete tokens
-===============================================
-
+### Letting users click to select and delete tokens
 There are three different styles of click handling build into the project. Please open an issue if you need some behavior beyond this with your code! It's relatively easy to add custom click handling, but I'm not convinced anyone would need anything beyond the ones I've provided. Call ```setTokenClickStyle``` to change the behavior.
 
 #### TokenCompleteTextView.TokenClickStyle.None
@@ -317,7 +271,7 @@ If you need more detailed view customization like changing a picture in the toke
 
 ### Example custom view
 
-In a view implementation (see ```com.tokenautocomplete.TokenTextView```):
+In a view implementation (see ```net.igenius.tokenautocompletedemo.TokenTextView```):
 ```java
 public class TokenTextView extends TextView {
 
@@ -333,7 +287,7 @@ public class TokenTextView extends TextView {
 
 contact_token.xml
 ```xml
-<com.tokenautocomplete.TokenTextView
+<net.igenius.tokenautocompletedemo.TokenTextView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/name"
@@ -365,15 +319,12 @@ public class ContactsCompletionView extends TokenCompleteTextView<Person> {
 }
 ```
 
-Custom completion delete behavior
-=================================
-
+### Custom completion delete behavior
 We've defaulted to the gmail style delete handling. That is, the most recently completed token, when deleted, turns into the text that was there before. All other tokens simply disappear when deleted.
 
 While this is the best in our case, we've provided a couple of other options if you want them. Call ```setDeletionStyle``` on the ```TokenCompleteTextView``` for different behaviors.
 
 #### TokenCompleteTextView.TokenDeleteStyle.Clear
-
 This is the default. The most recently completed token will turn into the partial completion text it replaces, all other tokens will just disappear when deleted
 
 #### TokenCompleteTextView.TokenDeleteStyle.PartialCompletion
@@ -384,9 +335,7 @@ All tokens will turn into the partial completion text they replaced
 
 Tokens will be replaced with the toString value of the objects they represent when they are deleted
 
-Restoring the view state
-========================
-
+### Restoring the view state
 If your token objects implement ```Serializable```, the ```TokenCompleteTextView``` will automatically handle ```onSaveInstanceState``` and ```onRestoreInstanceState```. If you cannot make your objects ```Serializable```, you should override ```getSerializableObjects``` and ```convertSerializableArrayToObjectArray```. ```getSerializableObjects``` should return an array of ```Serializable``` objects that can be used to rebuild your original objects when restoring the view state. ```convertSerializableArrayToObjectArray``` should take an array of ```Serializable``` objects and use them to rebuild your token objects.
 
 We use something similar to this at [splitwise](http://splitwise.com) to avoid saving complicated object graphs:
@@ -422,8 +371,7 @@ protected ArrayList<Serializable> getSerializableObjects() {
 }
 ```
 
-Other options
-=============
+### Other options
 * Turn off making a best guess when converting text into a token (allows free entry)
 ```java
 performBestGuess(false);
@@ -452,10 +400,9 @@ setTokenLimit(10);
 * Prevent specific tokens from being deleted by overriding ```isTokenRemovable``` on your completion view
 
 
-License
-=======
+### License
 
-    Copyright (c) 2013, 2014 splitwise, Wouter Dullaert
+    Copyright (c) 2017 iGenius Srl
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
