@@ -136,6 +136,7 @@ task javadoc(type: Javadoc) {
         linksOffline("http://d.android.com/reference", "${android.sdkDirectory}/docs/reference");
         setMemberLevel(JavadocMemberLevel.PUBLIC)
     }
+    failOnError false
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
