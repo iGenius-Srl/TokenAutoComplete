@@ -34,5 +34,5 @@ dependencies {
     compile "com.jakewharton:butterknife:$butterKnifeVersion"
     apt "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
 
-    compile project(':library')
+    compile project(':tokenautocomplete')
 }
