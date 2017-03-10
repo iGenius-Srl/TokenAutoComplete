@@ -910,6 +910,7 @@ public abstract class TokenCompleteTextView<T> extends MultiAutoCompleteTextView
     @Override
     protected void replaceText(CharSequence text) {
         clearComposingText();
+        clearCompletionText();
 
         // Don't build a token for an empty String
         if (selectedObject == null || selectedObject.toString().equals("")) return;

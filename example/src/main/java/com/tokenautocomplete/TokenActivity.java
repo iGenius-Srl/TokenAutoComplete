@@ -62,7 +62,7 @@ public class TokenActivity extends Activity implements TokenCompleteTextView.Tok
         completionView.setAdapter(adapter);
         completionView.setTokenListener(this);
         completionView.allowCollapse(true);
-        completionView.setThreshold(0);
+        completionView.setThreshold(1);
         completionView.performBestGuess(false);
         completionView.setTokenClickStyle(TokenCompleteTextView.TokenClickStyle.Select);
 
