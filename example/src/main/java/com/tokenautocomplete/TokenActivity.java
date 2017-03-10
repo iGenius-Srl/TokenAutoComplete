@@ -58,10 +58,13 @@ public class TokenActivity extends Activity implements TokenCompleteTextView.Tok
         };
 
         completionView = (ContactsCompletionView)findViewById(R.id.searchView);
+        completionView.setSplitChar(new char[]{',', ';', ' '});
         completionView.setAdapter(adapter);
         completionView.setTokenListener(this);
+        completionView.allowCollapse(true);
+        completionView.setThreshold(0);
+        completionView.performBestGuess(false);
         completionView.setTokenClickStyle(TokenCompleteTextView.TokenClickStyle.Select);
-
 
         if (savedInstanceState == null) {
             completionView.setPrefix("To: ", Color.parseColor("blue"));

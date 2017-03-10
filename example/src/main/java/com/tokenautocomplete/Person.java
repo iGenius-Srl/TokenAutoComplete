@@ -21,5 +21,5 @@ public class Person implements Serializable{
     public String getEmail() { return email; }
 
     @Override
-    public String toString() { return name; }
+    public String toString() { return email; }
 }
